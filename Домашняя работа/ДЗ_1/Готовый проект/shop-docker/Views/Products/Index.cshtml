@@ -1,0 +1,69 @@
+@model List<ShopApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Каталог товаров";
+    var message = TempData["Message"] as string;
+}
+
+<h1>Каталог товаров</h1>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div>
+        @message
+    </div>
+}
+
+<p>
+    <a asp-action="Create">+ Добавить товар</a>
+</p>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Цена</th>
+        <th>Остаток</th>
+        <th>Описание</th>
+        <th>Покупка</th>
+    </tr>
+
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Id</td>
+
+            <td>
+                <a asp-action="Details"
+                   asp-route-id="@product.Id">
+                    @product.Name
+                </a>
+            </td>
+
+            <td>@product.Price.ToString("C")</td>
+
+            <td>@product.Stock</td>
+
+            <td>@product.Description</td>
+
+            <td>
+                <form asp-action="Buy" method="post">
+                    <input type="hidden"
+                           name="id"
+                           value="@product.Id" />
+
+                    <input type="number"
+                           name="quantity"
+                           value="1"
+                           min="1"
+                           max="@product.Stock" />
+
+                    <button type="submit"
+                            disabled="@(product.Stock == 0)">
+                        Купить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

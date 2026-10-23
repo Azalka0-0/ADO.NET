@@ -1,0 +1,27 @@
+services:
+
+  db:
+    image: postgres:16
+    container_name: shop-postgres
+    environment:
+      POSTGRES_DB: shopdb
+      POSTGRES_USER: shopuser
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: shop-web
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=shopdb;Username=shopuser;Password=12345"
+      ASPNETCORE_URLS: "http://+:8080"
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
